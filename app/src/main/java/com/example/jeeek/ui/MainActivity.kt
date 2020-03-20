@@ -1,7 +1,8 @@
-package com.example.jeeek
+package com.example.jeeek.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.jeeek.R
 
 class MainActivity : AppCompatActivity() {
 
