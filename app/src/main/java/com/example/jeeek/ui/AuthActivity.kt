@@ -2,7 +2,6 @@ package com.example.jeeek.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -10,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.example.jeeek.R
 import com.example.jeeek.databinding.ActivityAuthBinding
+import com.example.jeeek.utils.validateForm
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import timber.log.Timber
@@ -51,7 +51,7 @@ class AuthActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun createAccount(email: String, password: String) {
         Log.d(TAG, "createAccount:$email")
-        if (!validateForm()) {
+        if (!validateForm(email, password)) {
             Log.d(TAG, "validate failed.")
             return
         }
@@ -83,7 +83,7 @@ class AuthActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun signIn(email: String, password: String) {
         Log.d(TAG, "signIn:$email")
-        if (!validateForm()) {
+        if (!validateForm(email, password)) {
             return
         }
 
@@ -159,28 +159,6 @@ class AuthActivity : AppCompatActivity(), View.OnClickListener {
                     Toast.LENGTH_SHORT).show()
             }
         }
-    }
-
-    private fun validateForm(): Boolean {
-        var valid = true
-
-        val email = binding.fieldEmail.text.toString()
-        if (TextUtils.isEmpty(email)) {
-            binding.fieldEmail.error = "Required."
-            valid = false
-        } else {
-            binding.fieldEmail.error = null
-        }
-
-        val password = binding.fieldPassword.text.toString()
-        if (TextUtils.isEmpty(password)) {
-            binding.fieldPassword.error = "Required."
-            valid = false
-        } else {
-            binding.fieldPassword.error = null
-        }
-
-        return valid
     }
 
     private fun updateUI(user: FirebaseUser?) {
