@@ -2,25 +2,30 @@ package com.example.jeeek.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.example.jeeek.R
 import com.example.jeeek.databinding.ActivityAuthBinding
+import com.example.jeeek.domain.EmailPasswordPayload
+import com.example.jeeek.repository.AuthRepository
+import com.example.jeeek.utils.validateForm
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 
 class AuthActivity : AppCompatActivity(), View.OnClickListener {
 
-    // [START declare_auth]
     private lateinit var auth: FirebaseAuth
     private lateinit var binding: ActivityAuthBinding
-    // [END declare_auth]
+    private lateinit var repository: AuthRepository
+
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +43,8 @@ class AuthActivity : AppCompatActivity(), View.OnClickListener {
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
         // [END initialize_auth]
+
+        repository = AuthRepository(auth)
     }
 
     // [START on_start_check_user]
@@ -50,66 +57,41 @@ class AuthActivity : AppCompatActivity(), View.OnClickListener {
     // [END on_start_check_user]
 
     private fun createAccount(email: String, password: String) {
-        Log.d(TAG, "createAccount:$email")
-        if (!validateForm()) {
-            Log.d(TAG, "validate failed.")
+        Timber.d("createAccount:$email")
+        if (!validateForm(email, password)) {
+            Timber.d("validate failed.")
             return
         }
-        Log.d(TAG, "validate ok.")
+        Timber.d("validate ok.")
 
-        // [START create_user_with_email]
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "createUserWithEmail:success")
-                    val user = auth.currentUser
-                    updateUI(user)
-                } else {
-                    try {
-                        throw task.exception!!
-                    } catch (e: Exception) {
-                        Log.e(TAG, e.message)
-                    }
-                    // If sign in fails, display a message to the user.
-                    Log.w(TAG, "createUserWithEmail:failure", task.exception)
-                    Toast.makeText(baseContext, "Authentication failed.",
-                        Toast.LENGTH_SHORT).show()
-                    updateUI(null)
-                }
-            }
-        // [END create_user_with_email]
+        coroutineScope.launch {
+            val p = EmailPasswordPayload(
+                email = email,
+                password = password
+            )
+            repository.signup(p)
+
+            val user = auth.currentUser
+            updateUI(user)
+        }
     }
 
     private fun signIn(email: String, password: String) {
-        Log.d(TAG, "signIn:$email")
-        if (!validateForm()) {
+        Timber.d("signIn:$email")
+        if (!validateForm(email, password)) {
             return
         }
 
-        // [START sign_in_with_email]
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "signInWithEmail:success")
-                    val user = auth.currentUser
-                    updateUI(user)
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w(TAG, "signInWithEmail:failure", task.exception)
-                    Toast.makeText(baseContext, "Authentication failed.",
-                        Toast.LENGTH_SHORT).show()
-                    updateUI(null)
-                }
+        coroutineScope.launch {
+            val p = EmailPasswordPayload(
+                email = email,
+                password = password
+            )
+            repository.signin(p)
 
-                // [START_EXCLUDE]
-                if (!task.isSuccessful) {
-                    binding.status.setText(R.string.auth_failed)
-                }
-                // [END_EXCLUDE]
-            }
-        // [END sign_in_with_email]
+            val user = auth.currentUser
+            updateUI(user)
+        }
     }
 
     private fun signOut() {
@@ -135,7 +117,7 @@ class AuthActivity : AppCompatActivity(), View.OnClickListener {
                         "Verification email sent to ${user.email} ",
                         Toast.LENGTH_SHORT).show()
                 } else {
-                    Log.e(TAG, "sendEmailVerification", task.exception)
+                    Timber.e("sendEmailVerification")
                     Toast.makeText(baseContext,
                         "Failed to send verification email.",
                         Toast.LENGTH_SHORT).show()
@@ -153,34 +135,12 @@ class AuthActivity : AppCompatActivity(), View.OnClickListener {
                     "Reload successful!",
                     Toast.LENGTH_SHORT).show()
             } else {
-                Log.e(TAG, "reload", task.exception)
+                Timber.e("reload")
                 Toast.makeText(this@AuthActivity,
                     "Failed to reload user.",
                     Toast.LENGTH_SHORT).show()
             }
         }
-    }
-
-    private fun validateForm(): Boolean {
-        var valid = true
-
-        val email = binding.fieldEmail.text.toString()
-        if (TextUtils.isEmpty(email)) {
-            binding.fieldEmail.error = "Required."
-            valid = false
-        } else {
-            binding.fieldEmail.error = null
-        }
-
-        val password = binding.fieldPassword.text.toString()
-        if (TextUtils.isEmpty(password)) {
-            binding.fieldPassword.error = "Required."
-            valid = false
-        } else {
-            binding.fieldPassword.error = null
-        }
-
-        return valid
     }
 
     private fun updateUI(user: FirebaseUser?) {
