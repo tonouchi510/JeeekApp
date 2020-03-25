@@ -14,4 +14,9 @@
     <string name="auth_failed">Authentication failed</string>
     <string name="reload">Reload</string>
     <string name="signed_out">Signed Out</string>
+
+    <string name="tab1_label">Timeline</string>
+    <string name="tab2_label">Follows</string>
+    <string name="tab3_label">Followers</string>
+    <string name="tab4_label">Notify</string>
 </resources>
