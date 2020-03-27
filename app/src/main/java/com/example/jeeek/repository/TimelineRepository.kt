@@ -12,7 +12,7 @@ class TimelineRepository {
     private val firestoreDB = FirebaseFirestore.getInstance()
 
     fun getTimeline(uid: String): Query {
-        return firestoreDB.collection("user")
+        return firestoreDB.collection("users")
             .document(uid)
             .collection("timeline")
             .orderBy("updatedAt")

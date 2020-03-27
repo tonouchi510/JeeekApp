@@ -68,6 +68,7 @@ class TimelineViewModel(application: Application) : AndroidViewModel(application
 
         val auth = FirebaseAuth.getInstance()
         val uid = auth.currentUser!!.uid
+        Timber.d(uid)
 
         viewModelScope.launch {
             timelineRepository.getTimeline(uid).addSnapshotListener(EventListener<QuerySnapshot> { value, e ->
@@ -80,6 +81,7 @@ class TimelineViewModel(application: Application) : AndroidViewModel(application
 
                 val savedTweets: MutableList<Tweet> = mutableListOf()
                 for (doc in value!!) {
+                    Timber.d(doc.data.toString())
                     val item = doc.toObject(Tweet::class.java)
                     savedTweets.add(item)
                 }

@@ -40,7 +40,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:textSize="12sp"
-                    android:text="@{tweet.updatedAt}" />
+                    android:text="@{tweet.updatedAt.toDate().toString()}" />
 
             </LinearLayout>
         </LinearLayout>
