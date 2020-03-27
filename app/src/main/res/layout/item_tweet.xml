@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
+
+    <data>
+        <variable
+            name="tweet"
+            type="com.example.jeeek.domain.Tweet" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        app:cardUseCompatPadding="true"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/user_icon"
+                android:layout_height="48dp"
+                android:layout_width="48dp"
+                app:imageUrl="@{tweet.userTiny.photoUrl}" />
+
+            <LinearLayout
+                android:layout_width="330dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginStart="8dp" >
+
+                <TextView
+                    android:id="@+id/user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="12sp"
+                    android:text="@{tweet.userTiny.name}" />
+
+                <TextView
+                    android:id="@+id/subject"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="16sp"
+                    android:text="@{tweet.content.subject}" />
+
+                <TextView
+                    android:id="@+id/comment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="12sp"
+                    android:text="@{tweet.content.comment}" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</layout>
