@@ -51,9 +51,9 @@ class TimelineViewModel(application: Application) : AndroidViewModel(application
         get() = _eventNetworkError
 
     /**
-     * Flag to display the error message. This is private to avoid exposing a
-     * way to set this value to observers.
-     */
+    * Flag to display the error message. This is private to avoid exposing a
+    * way to set this value to observers.
+    */
     private var _isNetworkErrorShown = MutableLiveData<Boolean>(false)
 
     /**
@@ -63,6 +63,8 @@ class TimelineViewModel(application: Application) : AndroidViewModel(application
     val isNetworkErrorShown: LiveData<Boolean>
         get() = _isNetworkErrorShown
 
+
+    var flagForTest = MutableLiveData<Boolean>(false)
 
     fun getTimelineFromRepository(): LiveData<List<Tweet>> {
 
