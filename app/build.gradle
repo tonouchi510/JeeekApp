@@ -28,6 +28,10 @@ android {
     dataBinding {
         enabled = true
     }
+    // Always show the result of every unit test when running via command line, even if it passes.
+    testOptions.unitTests {
+        includeAndroidResources = true
+    }
 }
 
 dependencies {
@@ -95,4 +99,10 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+    // AndroidX Test - JVM testing
+    testImplementation "androidx.test.ext:junit-ktx:1.1.1"
+    testImplementation "androidx.test:core-ktx:1.2.0"
+    testImplementation "org.robolectric:robolectric:4.3.1"
+    androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
 }
